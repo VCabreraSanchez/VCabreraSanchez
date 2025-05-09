@@ -33,7 +33,10 @@ var estadoPrincipal = {
         teclaAbajo = juego.input.keyboard.addKey(Phaser.Keyboard.DOWN);
 
         sonido_fondo = juego.sound.add('musica');
-        sonido_fondo.play();
+        juego.input.onDown.addOnce(function() {
+            sonido_fondo.play();
+        }, this);
+
     },
 
     update: function() {
