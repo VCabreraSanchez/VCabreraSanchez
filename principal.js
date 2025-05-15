@@ -19,23 +19,27 @@ var estadoPrincipal = {
     },
 
     create: function() {
-        // mostrar pantalla
+        // mostrar fondo
         fondoJuego = juego.add.tileSprite(0,0,370,550,'fondo');
+        // mostrar jugador
         nave = juego.add.sprite(juego.width/2, juego.height/2,'naves');
         nave.anchor.setTo(0.5, 0.5);
-        nave.frame = 1
+        nave.scale.setTo(1*escala);
+        nave.angle = 90;
         nave.animations.add('vuelo',[0,1,2,3,4,5,6,7],10,true);
-        nave.scale.setTo(1*escala)
-        nave.angle = 90
+        // controles
         teclaDerecha = juego.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
         teclaIzquierda = juego.input.keyboard.addKey(Phaser.Keyboard.LEFT);
         teclaArriba = juego.input.keyboard.addKey(Phaser.Keyboard.UP);
         teclaAbajo = juego.input.keyboard.addKey(Phaser.Keyboard.DOWN);
-
+        // musica de fondo
         sonido_fondo = juego.sound.add('musica');
-        juego.input.onDown.addOnce(function() {
-            sonido_fondo.play();
-        }, this);
+        sonido_fondo.play();
+        //limites
+        juego.physics.startSystem(Phaser.Physics.ARCADE);
+        juego.physics.arcade.enable(nave);
+        nave.body.collideWorldBounds=true;
+
 
     },
 
@@ -46,14 +50,24 @@ var estadoPrincipal = {
         
         if (teclaDerecha.isDown) {
             nave.x += velocidad;
-            nave.scale.setTo(1*escala,1*escala);
+            nave.scale.setTo(1*escala,1*escala); // Mantiene la orientación original
+            nave.angle = 90; // Asegura que mire a la derecha
         }else if (teclaIzquierda.isDown) {
             nave.x-= velocidad;
-            nave.scale.setTo(1*escala,-1*escala);
+            nave.scale.setTo(1*escala,-1*escala); // Invierte horizontalmente
+            nave.angle = 90; // Mantiene la orientación base, la inversión la hace mirar a la izquierda
         }else if (teclaArriba.isDown) {
             nave.y-= velocidad;
+            nave.scale.setTo(1*escala,1*escala); // Asegura no esté invertida
+            nave.angle = 0; // Rota hacia arriba
         }else if (teclaAbajo.isDown) {
             nave.y+= velocidad;
+            nave.scale.setTo(1*escala,1*escala); // Asegura no esté invertida
+            nave.angle = 180; // Rota hacia abajo
+        } else {
+            // Si no se presiona ninguna tecla, asegúrate de que la orientación sea la derecha por defecto
+            nave.scale.setTo(1*escala, 1*escala);
+            nave.angle = 90;
         }
     }
 };
